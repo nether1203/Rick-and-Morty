@@ -2,14 +2,15 @@ const baseUrl = 'https://rickandmortyapi.com/api/location';
 const container = document.querySelector('.cardsbox');
 
 
-function getCharectrrs () {
-    fetch(baseUrl)
+function getCharectrrs (page, name) {
+    fetch(`${baseUrl}/?page=${page}&name=${name}`)
     .then(response => response.json())
     .then(data =>{ 
         renderCards(data.results)
         renderPagination(data.info)
     })
 }
+getCharectrrs(1,'','');
 
 
 
@@ -32,28 +33,76 @@ function getCharectrrs () {
      
 
 
+    let currentPage = 1;
     function renderPagination(info){
-        const paginationbox = document.querySelector('.paginationbox')
-        paginationbox.innerHTML = `
-    <nav aria-label="Page navigation example">
-      <ul class="pagination">
-        <li class="page-item">
-          <a class="page-link" href="#" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item">
-          <a class="page-link" href="#" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>`
+      
+        const paginationbox = document.querySelector('.pagination')
+      paginationbox.innerHTML = ``;
+      paginationbox.innerHTML +=
+         `<li class="page-item prevPage ">
+                <a class="page-link" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                 </a>
+                </li>`;
+                paginationbox.innerHTML+=`<li class="page-item"><a class="page-link" href="#">${currentPage}</a></li>
+                ` ;
+      paginationbox.innerHTML+=`
+                <li class="page-item nextPage">
+                  <a class="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>`;
+     
+      
     
+      const nextPage = document.querySelector('.nextPage')
+      const prevPage = document.querySelector('.prevPage')
+      nextPage.addEventListener('click', () => {
+        currentPage++;
+    
+        console.log('next page');
+    
+        getCharectrrs(currentPage, '' , '');
+        
+      })
+      prevPage.addEventListener('click', () => {
+        console.log('prev page' );
+        if (currentPage > 1){
+          currentPage--;
+          getCharectrrs(currentPage, '', '');
         }
+        
+    
+        
+      })
+      }
 
 
-    getCharectrrs();
+      const btnFilter = document.querySelector(".btnFilter")
+
+      btnFilter.addEventListener('click', () => {
+         const locName = document.querySelector('.loc-name').value 
+         currentPage = 1
+         getCharacters(1, '', locName)
+         
+      })
+      
+      const exampleModal = document.getElementById('exampleModal')
+      if (exampleModal) {
+         exampleModal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget
+            const modalTitle = exampleModal.querySelector('.modal-title')
+            const id = button.getAttribute('data-bs-whatever')
+      
+            
+            fetch(`${baseUrl}/${id}`)
+               .then(response => response.json())
+               .then(data => {
+                  console.log(data);
+               })
+      
+      
+            modalTitle.textContent = `Info about ${id}`
+      
+         })
+      }

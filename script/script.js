@@ -12,7 +12,7 @@ function getCharectrrs (page, gender, status) {
     })
 }
 
-getCharectrrs(1,'', '');
+getCharectrrs(1,'','');
 
 function renderCards (data) {
     container.innerHTML = '';
