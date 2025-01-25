@@ -1,6 +1,10 @@
 const baseUrl = 'https://rickandmortyapi.com/api/character';
 const container = document.querySelector('.cardsbox')
 
+let currentPage = 1;
+let currentGender = '';
+let currentStatus = '';
+
 
 
 function getCharectrrs (page, gender, status) {
@@ -12,7 +16,7 @@ function getCharectrrs (page, gender, status) {
     })
 }
 
-getCharectrrs(1,'','');
+getCharectrrs(currentPage,currentGender,currentStatus);
 
 function renderCards (data) {
     container.innerHTML = '';
@@ -31,7 +35,7 @@ function renderCards (data) {
     });
 }
 
-let currentPage = 1;
+
 function renderPagination(info){
   
     const paginationbox = document.querySelector('.pagination')
@@ -55,41 +59,42 @@ function renderPagination(info){
 
   const nextPage = document.querySelector('.nextPage')
   const prevPage = document.querySelector('.prevPage')
-  nextPage.addEventListener('click', () => {
+  if (info.next == null){
+    nextPage.classList.add('disabled')
+  }else{nextPage.addEventListener('click', () => {
     currentPage++;
 
     console.log('next page');
 
-    getCharectrrs(currentPage, '' , '');
+    getCharectrrs(currentPage, currentGender , currentStatus);
     
-  })
-  prevPage.addEventListener('click', () => {
+  })}
+  if(info.prev = null){
+    prevPage.classList.add('disabled')
+  }else{prevPage.addEventListener('click', () => {
     console.log('prev page' );
-    if (currentPage > 1){
-      currentPage--;
-      getCharectrrs(currentPage, '', '');
-    }
+    currentPage--;
+      getCharectrrs(currentPage, currentGender , currentStatus);
+    
     
 
     
   })
-  }
+  }}
+  
 
 const btnfilter = document.querySelector('.btnFilter');
 
 btnfilter.addEventListener('click', () => {
   const gender = document.querySelector('#SelectGender').value;
   const status = document.querySelector('#SelectStatus').value;
-  currentPage = 1;
+  currentGender = gender;
+  currentStatus - status;
   console.log(gender,status);
-  if(gender === ''){
-    getCharectrrs(currentPage,'',status)
-  }else if (status === ''){
-    getCharectrrs(currentPage, gender, '')
-  }else{
-    getCharectrrs(currentPage, gender , status)
-  };
-  // getCharectrrs(gender,status)
+  currentPage = 1;
+  getCharectrrs(currentPage, currentGender , currentStatus);
+  
+ 
 })
 
 const exampleModal = document.getElementById('exampleModal')
@@ -98,9 +103,27 @@ if (exampleModal) {
     const button = event.relatedTarget 
     const id = button.getAttribute('data-bs-whatever')
     const modalTitle = exampleModal.querySelector('.modal-title')
+    const modalBody = document.querySelector('.modal-body')
     fetch(`${baseUrl}/${id}`)
-    
-    modalTitle.textContent = `Info about ${id}`
-    
+    .then(response => response.json())
+    .then(data =>{
+      console.log(data);
+      modalBody.innerHTML = '';
+      modalBody.innerHTML = `  <div class="boximg">
+              <img src="${data.image}" alt="">
+              
+            </div>
+            <div class="boxInfo">
+              <p>Name:${data.name}</p>
+              <p>Species:${data.species}</p>
+              <p>Gender:${data.gender}</p>
+              <p>Status:${data.status}</p>
+              <p>Origin:${data.origin.name}</p>
+              <p>Location:${data.location.name}</p>
+              </div>`;
+              modalTitle.textContent = `Info about ${data.name}`
   })
+    
+})
+  
 }
