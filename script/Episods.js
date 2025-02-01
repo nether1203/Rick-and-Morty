@@ -24,7 +24,7 @@ function renderCards (data) {
             <h5 class="card-title">${cardData.name}</h5>
             <p class="card-text">${cardData.episode}</p>
             <p class="card-text">${cardData.air_date}</p>
-            <button type="button" class="btn btnFilter btn-outline-success d-flex justify-content-center" id="btnAdd" data-name='${cardData.name}' data-episode='${cardData.episode}'>Add to my Wathclist</button>
+            <button type="button" class="btn btnFilter btn-outline-success d-flex justify-content-center btnAdd" id="" data-name='${cardData.name}' data-episode='${cardData.episode}'>Add to my Wathclist</button>
           </div>
           </div>`
         
@@ -79,21 +79,63 @@ getCharectrrs(currentPage, '', '');
 
 
 function addToWathclist () {
-  const btnAdds = document.querySelectorAll('#btnAdd');
+  const btnAdds = document.querySelectorAll('.btnAdd');
 
   console.log(btnAdds);
   btnAdds.forEach(btnAdd => {
     btnAdd.addEventListener('click' , () => {
       const name = btnAdd.getAttribute('data-name');
-      const episode = btnAdd.getAttribute('data-episode')
-      console.log(name) ;
-      const obj = {
-        name: name,
-        episode: episode,
-        watched: false
+      const episode = btnAdd.getAttribute('data-episode');
+      console.log(name);
+      let wathclist = JSON.parse(localStorage.getItem('wathclist')) || [] ;
+
+      const episodeObj = 
+        {
+          
+          name: name,
+          episode: episode,
+          watched: false,
+          addDate: new Date().toISOString()
+        };
+
+
+      const isAlredyAdded = wathclist.some(item => item.name === name && item.episode === episode);
+      console.log(wathclist);
+      console.log(isAlredyAdded);
+      
+      
+      if(!isAlredyAdded){
+        wathclist.push(episodeObj);
+        localStorage.setItem('wathclist', JSON.stringify(wathclist));
       }
-     localStorage.setItem('name', JSON.stringify(obj))
+
+    
     })
 
   })
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
